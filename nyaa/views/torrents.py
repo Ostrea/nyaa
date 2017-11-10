@@ -502,6 +502,10 @@ def comments_preview(torrent_id):
     if torrent.deleted and not (flask.g.user and flask.g.user.is_moderator):
         flask.abort(404)
 
+    for comment in torrent.comments[:5]:
+        if len(comment.text) > 30:
+            comment.text = comment.text[:30] + '...'
+
     return flask.jsonify(flask.render_template('comments_preview.html',
                                                torrent=torrent,
                                                comments=torrent.comments[:5]))
