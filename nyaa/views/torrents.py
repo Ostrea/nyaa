@@ -6,7 +6,7 @@ from urllib.parse import quote
 import flask
 from werkzeug.datastructures import CombinedMultiDict
 
-from sqlalchemy.orm import joinedload, lazyload, raiseload, noload
+from sqlalchemy.orm import joinedload, noload
 
 from nyaa import backend, forms, models, torrents
 from nyaa.extensions import db
