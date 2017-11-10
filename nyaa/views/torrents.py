@@ -6,7 +6,7 @@ from urllib.parse import quote
 import flask
 from werkzeug.datastructures import CombinedMultiDict
 
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, lazyload, raiseload, noload
 
 from nyaa import backend, forms, models, torrents
 from nyaa.extensions import db
@@ -492,9 +492,9 @@ def _get_cached_torrent_file(torrent):
 @bp.route('/comments-preview/<int:torrent_id>/', methods=['GET'])
 def comments_preview(torrent_id):
     torrent = (models.Torrent.query
-               .options(joinedload('comments'))
+               .options(noload('comments'))
                .filter_by(id=torrent_id)
-               .first())
+               .one())
     if not torrent:
         flask.abort(404)
 
@@ -502,10 +502,14 @@ def comments_preview(torrent_id):
     if torrent.deleted and not (flask.g.user and flask.g.user.is_moderator):
         flask.abort(404)
 
-    for comment in torrent.comments[:5]:
+    comments = (models.Comment.query
+                .filter_by(torrent_id=torrent_id)
+                .limit(5)
+                .all())
+    for comment in comments:
         if len(comment.text) > 30:
             comment.text = comment.text[:30] + '...'
 
     return flask.jsonify(flask.render_template('comments_preview.html',
                                                torrent=torrent,
-                                               comments=torrent.comments[:5]))
+                                               comments=comments))
