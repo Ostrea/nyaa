@@ -144,7 +144,16 @@ $(document).ready(function() {
             type: 'GET',
             dataType: 'json',
             success: function(data) {
-                $('#commentsPreview').html(data);
+                var commentsPreviewElement = $('#commentsPreview');
+                commentsPreviewElement.html(data);
+
+                var markdownTargets = commentsPreviewElement.find('[markdown-text]');
+            	for (var i = 0; i < markdownTargets.length; i++) {
+            		var target = markdownTargets[i];
+            		var markdownSource = htmlDecode(target.innerHTML);
+            		var rendered = markdown.render(markdownSource);
+            		target.innerHTML = rendered;
+                }
             }
         });
     }, function() {
