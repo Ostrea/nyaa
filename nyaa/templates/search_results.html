@@ -73,7 +73,7 @@
 					{% set torrent_id = torrent.meta.id if use_elastic else torrent.id %}
 					{% set com_count = torrent.comment_count %}
 					{% if com_count %}
-                    <a href="{{ url_for('torrents.view', torrent_id=torrent_id, _anchor='comments') }}" class="comments">
+                	<a href="{{ url_for('torrents.view', torrent_id=torrent_id, _anchor='comments') }}" class="comments">
 						<i class="fa fa-comments-o"></i>{{ com_count -}}
 					</a>
 					{% endif %}
